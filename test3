@@ -1,0 +1,59 @@
+#include <iostream>  
+2   
+3 using namespace std;  
+4   
+5 void myReverse(char*, char*);  
+6 char * senReverse(char*);  
+7 int main()  
+8 {  
+9     char sen[]="hello, I am a student!";  
+10     char *result=senReverse(sen);  
+11     cout << result << endl;  
+12     return 0;  
+13 }  
+14 void myReverse(char *start, char *end)  
+15 {  
+16     char temp;  
+17     while(start<end)  
+18     {  
+19         temp=*start;  
+20         *start=*end;  
+21         *end=temp;  
+22         start++;  
+23         end--;  
+24     }  
+25 }  
+26 char * senReverse(char *sen)  
+27 {  
+28     char *start=sen, *end=sen+strlen(sen)-1;  
+29     myReverse(start, end);  //先反转整个句子  
+30       
+31 [cpp] 
+32 释部分是另外一种实现，只不过看起来有些繁琐 
+33 int loc;  //记录每个单词的长度 
+34 for(start=sen,end=start;(*end)!='\0';start+=loc) 
+35 { 
+36     loc=0; 
+37     while((*end)!=' '&&(*end)!='\0'){end++, loc++;} 
+38     end--; 
+39     myReverse(start, end); 
+40     end+=2; 
+41     loc++; 
+42 } 
+43 */  
+44 end=start;  
+45 while(*start!='\0')  
+46 {  
+47     if(*end==' '||*end=='\0')  
+48     {  
+49         myReverse(start, --end);  
+50         if(*end=='\0')  
+51             break;  
+52         end+=2;  
+53         start=end;  
+54     }  
+55     else  
+56         ++end;  
+57 }  
+58   
+59 return sen;  
