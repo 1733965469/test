@@ -1,0 +1,107 @@
+1 /// <summary> 
+2     /// 使窗口的中的指定控件支持运行时移动 
+3     /// TODO:运行时缩放 
+4     /// </summary> 
+5     public class ControlMoveResize 
+6     { 
+7         #region 私有成员 
+8         bool IsMoving = false; 
+9         Point pCtrlLastCoordinate = new Point(0,0); 
+10         Point pCursorOffset = new Point(0, 0); 
+11         Point pCursorLastCoordinate = new Point(0, 0); 
+12         private Control ctrl = null; 
+13         private ScrollableControl Containe = null; 
+14         #endregion 
+15         #region 私有方法 
+16         /// <summary> 
+17         /// 在鼠标左键按下的状态记录鼠标当前的位置,以及被移动组件的当前位置 
+18         /// </summary> 
+19         /// <param name="sender"></param> 
+20         /// <param name="e"></param> 
+21         private void MouseDown(object sender, MouseEventArgs e) 
+22         { 
+23             if (Containe == null) 
+24             { 
+25                 return; 
+26             } 
+27             if (e.Button == MouseButtons.Left) 
+28             { 
+29                 IsMoving = true; 
+30                 pCtrlLastCoordinate.X = ctrl.Left; 
+31                 pCtrlLastCoordinate.Y = ctrl.Top; 
+32                 pCursorLastCoordinate.X = Cursor.Position.X; 
+33                 pCursorLastCoordinate.Y = Cursor.Position.Y; 
+34             } 
+35         } 
+36         private void MouseMove(object sender, MouseEventArgs e) 
+37         { 
+38             if (Containe == null) 
+39             { 
+40                 return; 
+41             } 
+42                  
+43             if (e.Button == MouseButtons.Left) 
+44             { 
+45                 if (this.IsMoving) 
+46                 { 
+47                     Point pCursor = new Point(Cursor.Position.X, Cursor.Position.Y); 
+48                    
+49                     pCursorOffset.X = pCursor.X - pCursorLastCoordinate.X; 
+50                 
+51                     pCursorOffset.Y = pCursor.Y - pCursorLastCoordinate.Y; 
+52                     ctrl.Left = pCtrlLastCoordinate.X + pCursorOffset.X; 
+53                     ctrl.Top = pCtrlLastCoordinate.Y + pCursorOffset.Y; 
+54                 } 
+55 
+ 
+56             } 
+57         } 
+58   
+59         private void MouseUp(object sender, MouseEventArgs e) 
+60         { 
+61             if (Containe == null) 
+62             { 
+63                 return; 
+64             } 
+65             if (this.IsMoving) 
+66             { 
+67                 if (pCursorOffset.X == 0 && pCursorOffset.Y == 0) 
+68                 { 
+69                     return; 
+70                 } 
+71                 if ((pCtrlLastCoordinate.X + pCursorOffset.X + ctrl.Width) > 0) 
+72                 { 
+73                     ctrl.Left = pCtrlLastCoordinate.X + pCursorOffset.X; 
+74                 } 
+75                 else 
+76                 { 
+77                     ctrl.Left = 0; 
+78                 } 
+79                 if ((pCtrlLastCoordinate.Y + pCursorOffset.Y + ctrl.Height) > 0) 
+80                 { 
+81                     ctrl.Top = pCtrlLastCoordinate.Y + pCursorOffset.Y; 
+82                 } 
+83                 else 
+84                 { 
+85                     ctrl.Top = 0; 
+86                 } 
+87                 pCursorOffset.X = 0; 
+88                 pCursorOffset.Y = 0; 
+89             } 
+90         } 
+91         #endregion 
+92         #region 构造函数 
+93         /// <summary> 
+94         /// 获取被移动控件对象和容器对象 
+95         /// </summary> 
+96         /// <param name="c">被设置为可运行时移动的控件</param> 
+97         /// <param name="parentContain">可移动控件的容器</param> 
+98         public ControlMoveResize(Control c, ScrollableControl parentContain) 
+99         { 
+100             ctrl = c; 
+101             this.Containe = parentContain; 
+102             ctrl.MouseDown += new MouseEventHandler(MouseDown); 
+103             ctrl.MouseMove += new MouseEventHandler(MouseMove); 
+104             ctrl.MouseUp += new MouseEventHandler(MouseUp); 
+105         } 
+106         #endregion 
